@@ -1,7 +1,7 @@
 {
-  "name": "react-webpack-typescript-starter",
+  "name": "dialog-label",
   "version": "0.1.0",
-  "description": "Starter kit for React, Webpack (with Hot Module Replacement), Typescript and Babel.",
+  "description": "Dialog System NLU data label (web based on https://github.com/vikpe/react-webpack-typescript-starter)",
   "keywords": [
     "react",
     "webpack",
@@ -10,18 +10,20 @@
     "sass",
     "hmr",
     "starter",
-    "boilerplate"
+    "boilerplate",
+    "dialog",
+    "NLU"
   ],
-  "author": "Viktor Persson",
+  "author": "Qinghua Duan",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vikpe/react-webpack-typescript-starter.git"
+    "url": "git+https://github.com/qhduan/dialog-label.git"
   },
   "bugs": {
-    "url": "https://github.com/vikpe/react-webpack-typescript-starter/issues"
+    "url": "https://github.com/qhduan/dialog-label/issues"
   },
-  "homepage": "https://github.com/vikpe/react-webpack-typescript-starter",
+  "homepage": "https://github.com/qhduan/dialog-label",
   "scripts": {
     "build": "npm run clean-dist && webpack -p --config=configs/webpack/prod.js",
     "clean-dist": "rm -f -r -d dist",
@@ -73,6 +75,7 @@
   "dependencies": {
     "@types/react-router": "^4.0.26",
     "@types/react-router-dom": "^4.2.7",
+    "antd": "^3.6.1",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2"
   },
