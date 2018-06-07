@@ -33,9 +33,15 @@ export default class LabelList extends React.Component {
                                 overlay={
                                     <Menu
                                         onClick={item => {
-                                            this.setState({
-                                                newText: `domain:${item.key}`
-                                            });
+                                            if (newText.match(/domain:/)) {
+                                                this.setState({
+                                                    newText: `${newText} domain:${item.key}`
+                                                });
+                                            } else {
+                                                this.setState({
+                                                    newText: `domain:${item.key}`
+                                                });
+                                            }
                                         }}
                                     >
                                         {domainNames.map(i => (
@@ -62,9 +68,15 @@ export default class LabelList extends React.Component {
                                 overlay={
                                     <Menu
                                         onClick={item => {
-                                            this.setState({
-                                                newText: `intent:${item.key}`
-                                            });
+                                            if (newText.match(/intent:/)) {
+                                                this.setState({
+                                                    newText: `${newText} intent:${item.key}`
+                                                });
+                                            } else {
+                                                this.setState({
+                                                    newText: `intent:${item.key}`
+                                                });
+                                            }
                                         }}
                                     >
                                         {intentNames.map(i => (
@@ -91,9 +103,15 @@ export default class LabelList extends React.Component {
                                 overlay={
                                     <Menu
                                         onClick={item => {
-                                            this.setState({
-                                                newText: `entity:${item.key}`
-                                            });
+                                            if(newText.match(/entity:/)) {
+                                                this.setState({
+                                                    newText: `${newText} entity:${item.key}`
+                                                });
+                                            } else {
+                                                this.setState({
+                                                    newText: `entity:${item.key}`
+                                                });
+                                            }
                                         }}
                                     >
                                         {entityNames.map(i => (
@@ -222,27 +240,34 @@ export default class LabelList extends React.Component {
                                 }
                                 let m;
 
-                                m = t.match(/^domain:(.*)$/);
+                                m = t.match(/domain:([^$\s]+)/g);
                                 if (m) {
-                                    if (item.domain === m[1])
-                                        return true;
-                                    else
-                                        return false;
-                                }
-
-                                m = t.match(/^intent:(.*)$/);
-                                if (m) {
-                                    if (item.intent === m[1])
-                                        return true;
-                                    else
-                                        return false;
-                                }
-
-                                m = t.match(/^entity:(.*)$/);
-                                if (m) {
-                                    for (const e of item.data) {
-                                        if (e.name === m[1]) {
+                                    for (const mm of m) {
+                                        if (mm.split(":")[1] === item.domain) {
                                             return true;
+                                        }
+                                    }
+                                    return false;
+                                }
+
+                                m = t.match(/intent:([^$\s]+)/g);
+                                if (m) {
+                                    for (const mm of m) {
+                                        if (mm.split(":")[1] === item.intent) {
+                                            return true;
+                                        }
+                                    }
+                                    return false;
+                                }
+
+                                m = t.match(/entity:([^$\s]+)/g);
+                                if (m) {
+                                    for (const mm of m) {
+                                        const mmm = mm.split(":")[1];
+                                        for (const e of item.data) {
+                                            if (e.name === mmm) {
+                                                return true;
+                                            }
                                         }
                                     }
                                     return false;

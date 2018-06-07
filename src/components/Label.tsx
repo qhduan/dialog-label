@@ -240,6 +240,14 @@ export default class Label extends React.Component {
                                         return message.warning("意图必填");
                                     }
 
+                                    if (intent.trim().indexOf(" ") !== -1) {
+                                        return message.warning("意图不能有空格，请使用下划线");
+                                    }
+
+                                    if (domain.trim().indexOf(" ") !== -1) {
+                                        return message.warning("领域不能有空格，请使用下划线");
+                                    }
+
                                     Array.from(currentLabel).forEach((c, i) => {
                                         let inEntity = null;
                                         let isStart = false;
@@ -274,8 +282,8 @@ export default class Label extends React.Component {
                                     });
 
                                     const obj = {
-                                        domain,
-                                        intent,
+                                        domain: domain.trim(),
+                                        intent: intent.trim(),
                                         data: ret,
                                     };
 
