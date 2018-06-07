@@ -1,6 +1,7 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
-import { Table } from "antd";
+import { Link, Redirect } from "react-router-dom";
+import { Table, Row, Col, message, Form, Input, Button, Icon } from "antd";
+const { Item } = Form;
 import { getEntities, setEntities } from "./entities";
 
 const Columns = [
@@ -15,27 +16,111 @@ const Columns = [
         dataIndex: "count",
         title: "数量",
     },
+    {
+        key: "manage",
+        dataIndex: "manage",
+        title: "管理",
+    },
 ];
 
 export default class SlotList extends React.Component {
 
+    state = {
+        redirect: null,
+        newText : "",
+    }
+
     render () {
+
+        document.title = "对话标注 — 实体列表";
+
+        const { redirect, newText } = this.state;
+
         const entities = getEntities();
         return (
             <div>
-                <h1>SLot List Page</h1>
+                {redirect ? <Redirect to={ redirect } /> : null}
                 <div>
-                    <Table
-                        columns={Columns}
-                        dataSource={entities.map(item => {
-                            return {
-                                key: item.entity,
-                                name: item.entity,
-                                count: item.data.length,
-                            };
-                        })}
-                    />
+                    <Form
+                        onSubmit={e => {
+                            e.preventDefault();
+                            if (newText.trim().length <= 0) {
+                                return message.warning("不能为空");
+                            }
+                            this.setState({
+                                redirect: `/slot/${newText.trim()}`
+                            });
+                        }}
+                    >
+                        <Item
+                            label="新建"
+                            labelCol={{ span: 3 }}
+                            wrapperCol={{ span: 18 }}
+                        >
+                            <Input
+                                value={newText}
+                                onChange={e => this.setState({newText: e.target.value})}
+                                suffix={newText.length ? <Icon type="close-circle" onClick={() => this.setState({ newText: "" })} /> : null}
+                                onKeyUp={e => {
+                                    if (e.keyCode === 27) {
+                                        this.setState({ newText: "" });
+                                    }
+                                }}
+                            />
+                        </Item>
+                    </Form>
                 </div>
+                <Row>
+                    <Col offset={3} span={18}>
+                        {newText.trim().length ? (
+                            <div>
+                                {`筛选 “${newText.trim()}” ：`}
+                            </div>
+                        ) : null}
+                        <Table
+                            pagination={{ defaultPageSize: 100 }}
+                            columns={Columns}
+                            dataSource={entities.filter(item => {
+                                const t = newText.trim();
+                                if (t.length <= 0) {
+                                    return true;
+                                }
+                                if (item.entity === t) {
+                                    return true;
+                                }
+                                let text = "";
+                                for (const d of item.data) {
+                                    if (d.join) {
+                                        text += d.join("");
+                                    } else {
+                                        text += d;
+                                    }
+                                }
+                                if (text.indexOf(t) >= 0) {
+                                    return true;
+                                }
+                                return false;
+                            }).map(item => {
+                                return {
+                                    key: item.entity,
+                                    name: item.entity,
+                                    count: item.data.length,
+                                    manage: (
+                                        <Button
+                                            onClick={() => {
+                                                const newEntities = entities.filter(i => i.entity !== item.entity);
+                                                setEntities(newEntities);
+                                                this.setState({});
+                                            }}
+                                        >
+                                            删除
+                                        </Button>
+                                    )
+                                };
+                            })}
+                        />
+                    </Col>
+                </Row>
             </div>
         );
     }

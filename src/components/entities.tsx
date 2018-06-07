@@ -1,7 +1,9 @@
 
+import { message } from "antd";
+
 function entitySort (a, b) {
     if (a.entity.length !== b.entity.length) {
-        return a.entitye.length - b.entity.length;
+        return a.entity.length - b.entity.length;
     }
     if (a.entity > b.entity) {
         return 1;
@@ -29,8 +31,10 @@ export function entitiyInnerSort (a, b) {
     return 0;
 }
 
+export let entityNames = [];
+
 export function getEntities () {
-    let entities = sessionStorage.getItem("entities");
+    let entities = localStorage.getItem("entities");
     if (typeof entities !== "string") {
         return [];
     } else {
@@ -42,6 +46,7 @@ export function getEntities () {
                     tt.data.sort(entitiyInnerSort);
                 }
             }
+            entityNames = t.map(i => i.entity);
             return t;
         } catch (e) {
             return [];
@@ -49,14 +54,15 @@ export function getEntities () {
     }
 }
 
-export function setEntities (entities) {
+export function setEntities (entities: any[]) {
+    entityNames = entities.map(i => i.entity);
     entities.sort(entitySort);
     for (const tt of entities) {
         if (tt.data) {
             tt.data.sort(entitiyInnerSort);
-        }
+        }3
     }
-    sessionStorage.setItem("entities", JSON.stringify(entities));
+    localStorage.setItem("entities", JSON.stringify(entities));
 }
 
 const EntitiesSample = [
@@ -70,4 +76,9 @@ const EntitiesSample = [
     }
 ];
 
-setEntities(EntitiesSample);
+if (getEntities().length <= 0) {
+    setEntities(EntitiesSample);
+    message.info("当前没有 实体 语料，已经载入默认实体样例");
+} else {
+    message.info(`已经载入了 ${getEntities().length}条 实体样例`);
+}

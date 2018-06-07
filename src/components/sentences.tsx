@@ -1,4 +1,6 @@
 
+import { message } from "antd";
+
 function sentenceSort (a, b) {
     if (a.domain.length !== b.domain.length) {
         return a.domain.length - b.domain.length;
@@ -19,14 +21,37 @@ function sentenceSort (a, b) {
     return 0;
 }
 
+export let intentNames = [];
+export let domainNames = [];
+
 export function getSentences () {
-    let sentences = sessionStorage.getItem("sentences");
+    let sentences = localStorage.getItem("sentences");
     if (typeof sentences !== "string") {
         return [];
     } else {
         try {
             const t = JSON.parse(sentences);
             t.sort(sentenceSort);
+
+            intentNames = []
+            t.filter(i => i.intent).forEach(i => intentNames.indexOf(i.intent) === -1 ? intentNames.push(i.intent) : null);
+            domainNames = []
+            t.filter(i => i.domain).map(i => domainNames.indexOf(i.domain) === -1 ? domainNames.push(i.domain) : null);
+            const sort = (a, b) => {
+                if (a.length !== b.length) {
+                    return a.length - b.length;
+                }
+                if (a > b) {
+                    return 1;
+                } else if (a < b) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            };
+            intentNames.sort(sort);
+            domainNames.sort(sort);
+
             return t;
         } catch (e) {
             return [];
@@ -34,9 +59,29 @@ export function getSentences () {
     }
 }
 
-export function setSentences (sentences) {
+export function setSentences (sentences: any[]) {
+
+    intentNames = []
+    sentences.filter(i => i.intent).forEach(i => intentNames.indexOf(i.intent) === -1 ? intentNames.push(i.intent) : null);
+    domainNames = []
+    sentences.filter(i => i.domain).map(i => domainNames.indexOf(i.domain) === -1 ? domainNames.push(i.domain) : null);
+    const sort = (a, b) => {
+        if (a.length !== b.length) {
+            return a.length - b.length;
+        }
+        if (a > b) {
+            return 1;
+        } else if (a < b) {
+            return -1;
+        } else {
+            return 0;
+        }
+    };
+    intentNames.sort(sort);
+    domainNames.sort(sort);
+
     sentences.sort(sentenceSort);
-    sessionStorage.setItem("sentences", JSON.stringify(sentences));
+    localStorage.setItem("sentences", JSON.stringify(sentences));
 }
 
 
@@ -70,4 +115,9 @@ const SentencesSample = [
     }
 ];
 
-setSentences(SentencesSample);
+if (getSentences().length <= 0) {
+    setSentences(SentencesSample);
+    message.info("当前没有 意图 语料，已经载入默认意图样例");
+} else {
+    message.info(`已经载入了 ${getSentences().length}条 实体样例`);
+}

@@ -1,9 +1,11 @@
 import * as React from "react";
 import { Redirect } from "react-router-dom";
-import { Select, Input, Tag, Form, Button, message } from "antd";
+import { Select, Input, Tag, Form, Button, message, Icon } from "antd";
 const { Item } = Form;
 const { Option } = Select;
-import { getSentences, setSentences } from "./sentences";
+import { getSentences, setSentences, domainNames, intentNames } from "./sentences";
+import { getRandomColor } from "./colors";
+import { entityNames } from "./entities";
 
 export default class Label extends React.Component {
 
@@ -61,7 +63,15 @@ export default class Label extends React.Component {
             if (isStart) {
                 ret.push(
                     <span
-                        style={{backgroundColor: "red"}}
+                        style={{
+                            backgroundColor: getRandomColor(inEntity.name),
+                            padding: "5px",
+                            paddingLeft: "3px",
+                            paddingBottom: "3px",
+                            borderRadius: "5px",
+                            marginLeft: "5px",
+                            marginRight: "5px",
+                        }}
                     >
                         {inEntity.value}
                     </span>
@@ -81,6 +91,9 @@ export default class Label extends React.Component {
     }
 
     render () {
+
+        document.title = "对话标注 — 意图标注 — " + this.state.currentLabel;
+
         const {
             redirect,
             currentLabel, infoBox,
@@ -92,15 +105,17 @@ export default class Label extends React.Component {
         return (
             <div>
                 {redirect ? <Redirect to={redirect} /> : null}
-                <h1>Label Page</h1>
-                <div>
+                <div style={{ marginTop: "10px" }}>
                     <Form>
                         <Item
                             label="语句"
-                            labelCol={{ span: 2 }}
-                            wrapperCol={{ span: 12 }}
+                            labelCol={{ span: 3 }}
+                            wrapperCol={{ span: 18 }}
                         >
                             <div
+                                style={{
+                                    fontSize: "20px"
+                                }}
                                 id="labelText"
                                 onMouseUp={() => {
                                     const s = window.getSelection();
@@ -151,32 +166,34 @@ export default class Label extends React.Component {
                         </Item>
                         <Item
                             label="领域"
-                            labelCol={{ span: 2 }}
-                            wrapperCol={{ span: 12 }}
+                            labelCol={{ span: 3 }}
+                            wrapperCol={{ span: 18 }}
                         >
-                            <Input
+                            <HintInput
                                 placeholder="选填"
                                 style={{width: 200}}
                                 value={domain}
-                                onChange={e => this.setState({ domain: e.target.value })}
+                                onChange={domain => this.setState({ domain })}
+                                options={domainNames}
                             />
                         </Item>
                         <Item
                             label="意图"
-                            labelCol={{ span: 2 }}
-                            wrapperCol={{ span: 12 }}
+                            labelCol={{ span: 3 }}
+                            wrapperCol={{ span: 18 }}
                         >
-                            <Input
+                            <HintInput
                                 placeholder="必填"
                                 style={{width: 200}}
                                 value={intent}
-                                onChange={e => this.setState({ intent: e.target.value })}
+                                onChange={intent => this.setState({ intent })}
+                                options={intentNames}
                             />
                         </Item>
                         <Item
                             label="选择"
-                            labelCol={{ span: 2 }}
-                            wrapperCol={{ span: 12 }}
+                            labelCol={{ span: 3 }}
+                            wrapperCol={{ span: 18 }}
                         >
 
                             {entities.map((e) => (
@@ -194,16 +211,26 @@ export default class Label extends React.Component {
                                             entities: newEntities
                                         });
                                     }}
+                                    style={{
+                                        borderColor: getRandomColor(e.name)
+                                    }}
                                 >
-                                    <label>{e.name} : {e.value} （{e.start}-{e.end}）</label>
+                                    {entityNames.indexOf(e.name) === -1 ? (
+                                        <Icon
+                                            type="exclamation-circle"
+                                            title="这个实体还未在实体界面添加！"
+                                            style={{ marginRight: "5px" }}
+                                        />
+                                    ) : null}
+                                    {e.name} : {e.value}
                                 </Tag>
                             ))}
                             { this.showSelect() }
                         </Item>
                         <Item
                             label="管理"
-                            labelCol={{ span: 2 }}
-                            wrapperCol={{ span: 12 }}
+                            labelCol={{ span: 3 }}
+                            wrapperCol={{ span: 18 }}
                         >
                             <Button
                                 onClick={() => {
@@ -266,6 +293,7 @@ export default class Label extends React.Component {
                                         redirect: "/labels"
                                     });
                                 }}
+                                style={{ marginRight: "20px" }}
                             >
                                 保存
                             </Button>
@@ -334,6 +362,59 @@ export default class Label extends React.Component {
     
 }
 
+
+
+
+
+interface HintInputProps {
+    placeholder?: undefined|string,
+    style?: undefined|object,
+    state?: any,
+    value?: string,
+    onChange?: any,
+    options?: any[],
+}
+
+interface HintInputState {
+}
+
+class HintInput extends React.Component<HintInputProps, HintInputState> {
+
+    render () {
+        const { placeholder, style, value, onChange, options } = this.props;
+        if (options && options.length) {
+            return (
+                <Select
+                    mode="combobox"
+                    onChange={ onChange }
+                    value={ value }
+                    placeholder={ placeholder }
+                    style={ style }
+                >
+                    {options.map(i => (
+                        <Option key={i}>
+                            {i}
+                        </Option>
+                    ))}
+                </Select>
+            )
+        } else {
+            return (
+                <Select
+                    mode="combobox"
+                    onChange={ onChange }
+                    value={ value }
+                    placeholder={ placeholder }
+                    style={ style }
+                />
+            )
+        }
+        
+    }
+
+}
+
+
 interface SlotNameInputProps {
     placeholder?: undefined|string,
     style?: undefined|object,
@@ -361,8 +442,12 @@ class SlotNameInput extends React.Component<SlotNameInputProps, SlotNameInputSta
         this.props.onSubmit(value || this.state.value);
     }
 
-    handleChange = (value) => {
+    handleChange = (value, option) => {
         this.setState({ value });
+        // console.log("option", option);
+        if (option && option.ref) {
+            this.submit(null, option.key);
+        }
     }
 
     constructor (props) {
@@ -388,19 +473,12 @@ class SlotNameInput extends React.Component<SlotNameInputProps, SlotNameInputSta
         const { data, placeholder, style } = this.props;
         const { value } = this.state;
 
-        const options = (data || []).filter(d => {
-            if (value.trim().length <= 0) {
-                return true;
-            }
-            if (d && d.text && d.text.indexOf && d.text.indexOf(value) >= 0) {
-                return true;
-            }
-            return false;
-        }).map((d, i) => (
+        const options = entityNames.map(i => (
             <Option
-                key={ d.value }
+                ref={i}
+                key={i}
             >
-                { d.text }
+                {i}
             </Option>
         ));
 
