@@ -12,6 +12,7 @@ module.exports = merge(commonConfig, {
     path: resolve(__dirname, '../../dist'),
     publicPath: '',
   },
-  devtool: 'source-map',
+  // 是否输出 source-map
+  // devtool: 'source-map',
   plugins: [],
 });
