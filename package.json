@@ -1,6 +1,6 @@
 {
   "name": "dialog-label",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Dialog System NLU data label (web based on https://github.com/vikpe/react-webpack-typescript-starter)",
   "keywords": [
     "react",
