@@ -83,6 +83,7 @@ export default class Slot extends React.Component {
                             <Input
                                 value={regex}
                                 onChange={e => this.setState({ regex: e.target.value })}
+                                placeholder="可选正则表达式，注意要把“\”写成“\\”"
                             />
                         </Item>
                     </Form>
@@ -112,6 +113,7 @@ export default class Slot extends React.Component {
                             <Input
                                 value={newEntity}
                                 onChange={e => this.setState({ newEntity: e.target.value })}
+                                placeholder="输入一个 新实体 并 回车"
                             />
                         </Item>
                     </Form>

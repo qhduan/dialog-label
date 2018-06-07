@@ -119,5 +119,5 @@ if (getSentences().length <= 0) {
     setSentences(SentencesSample);
     message.info("当前没有 意图 语料，已经载入默认意图样例");
 } else {
-    message.info(`已经载入了 ${getSentences().length}条 实体样例`);
+    message.info(`已经载入了 ${getSentences().length}条 意图样例`);
 }

@@ -3,35 +3,7 @@ import { Link, Redirect } from "react-router-dom";
 import { Table, Input, Form, message, Button, Row, Col, Icon, Dropdown, Menu } from "antd";
 import { getSentences, setSentences, intentNames, domainNames } from "./sentences";
 import { EntityName } from "./EntityName";
-
-const Columns = [
-    {
-        key: "domain",
-        dataIndex: "domain",
-        title: "领域",
-    },
-    {
-        key: "intent",
-        dataIndex: "intent",
-        title: "意图",
-    },
-    {
-        key: "sentence",
-        dataIndex: "sentence",
-        title: "句子",
-        render: s => <Link to={`/label/${s}`}>{ s }</Link>,
-    },
-    {
-        key: "entities",
-        dataIndex: "entities",
-        title: "实体",
-    },
-    {
-        key: "manage",
-        dataIndex: "manage",
-        title: "管理",
-    },
-];
+import { entityNames } from "./entities";
 
 
 export default class LabelList extends React.Component {
@@ -62,7 +34,7 @@ export default class LabelList extends React.Component {
                                     <Menu
                                         onClick={item => {
                                             this.setState({
-                                                newText: item.key
+                                                newText: `domain:${item.key}`
                                             });
                                         }}
                                     >
@@ -91,7 +63,7 @@ export default class LabelList extends React.Component {
                                     <Menu
                                         onClick={item => {
                                             this.setState({
-                                                newText: item.key
+                                                newText: `intent:${item.key}`
                                             });
                                         }}
                                     >
@@ -112,6 +84,35 @@ export default class LabelList extends React.Component {
                         ) : (
                             <span style={{ marginRight: "20px" }}>
                                 当前语料没有意图
+                            </span>
+                        )}
+                        {entityNames.length ? (
+                            <Dropdown
+                                overlay={
+                                    <Menu
+                                        onClick={item => {
+                                            this.setState({
+                                                newText: `entity:${item.key}`
+                                            });
+                                        }}
+                                    >
+                                        {entityNames.map(i => (
+                                            <Menu.Item key={i}>
+                                                {i}
+                                            </Menu.Item>
+                                        ))}
+                                    </Menu>
+                                }
+                                trigger={['click']}
+                            >
+                                <Button style={{ marginRight: "20px" }}>
+                                    实体列表
+                                    <Icon type="down" />
+                                </Button>
+                            </Dropdown>
+                        ) : (
+                            <span style={{ marginRight: "20px" }}>
+                                当前语料没有实体
                             </span>
                         )}
                     </Col>
@@ -136,12 +137,15 @@ export default class LabelList extends React.Component {
                             <Input
                                 value={newText}
                                 onChange={e => this.setState({newText: e.target.value})}
-                                suffix={newText.length ? <Icon type="close-circle" onClick={() => this.setState({ newText: "" })} /> : null}
+                                suffix={newText.length ? (
+                                    <Icon style={{cursor: "pointer"}} type="close-circle" onClick={() => this.setState({ newText: "" })} >esc</Icon>
+                                ) : null}
                                 onKeyUp={e => {
                                     if (e.keyCode === 27) {
                                         this.setState({ newText: "" });
                                     }
                                 }}
+                                placeholder="要新建意图请 输入一句话 并 回车"
                             />
                         </Form.Item>
                     </Form>
@@ -155,18 +159,95 @@ export default class LabelList extends React.Component {
                         ) : null}
                         <Table
                             pagination={{ defaultPageSize: 100 }}
-                            columns={Columns}
+                            columns={[
+                                {
+                                    key: "domain",
+                                    dataIndex: "domain",
+                                    title: "领域",
+                                    render: s => (
+                                        <a
+                                            href=""
+                                            onClick={e => { e.preventDefault(); this.setState({ newText: `domain:${s}` }) }}
+                                            style={{ color: "gray" }}
+                                            title={`筛选领域${s}`}
+                                        >
+                                            { s }
+                                        </a>
+                                    ),
+                                },
+                                {
+                                    key: "intent",
+                                    dataIndex: "intent",
+                                    title: "意图",
+                                    render: s => (
+                                        <a
+                                            href=""
+                                            onClick={e => { e.preventDefault(); this.setState({ newText: `intent:${s}` }) }}
+                                            style={{ color: "gray" }}
+                                            title={`筛选实体${s}`}
+                                        >
+                                            { s }
+                                        </a>
+                                    ),
+                                },
+                                {
+                                    key: "sentence",
+                                    dataIndex: "sentence",
+                                    title: "句子",
+                                    render: s => (
+                                        <Link
+                                            to={`/label/${s}`}
+                                            title={`编辑句子“${s}”`}
+                                        >
+                                            { s }
+                                        </Link>
+                                    ),
+                                },
+                                {
+                                    key: "entities",
+                                    dataIndex: "entities",
+                                    title: "实体",
+                                },
+                                {
+                                    key: "manage",
+                                    dataIndex: "manage",
+                                    title: "管理",
+                                },
+                            ]}
                             dataSource={sentences.filter(item => {
+                                // 过滤
                                 const t = newText.trim();
                                 if (t.length <= 0) {
                                     return true;
                                 }
-                                if (item.domain === t) {
-                                    return true;
+                                let m;
+
+                                m = t.match(/^domain:(.*)$/);
+                                if (m) {
+                                    if (item.domain === m[1])
+                                        return true;
+                                    else
+                                        return false;
                                 }
-                                if (item.intent === t) {
-                                    return true;
+
+                                m = t.match(/^intent:(.*)$/);
+                                if (m) {
+                                    if (item.intent === m[1])
+                                        return true;
+                                    else
+                                        return false;
                                 }
+
+                                m = t.match(/^entity:(.*)$/);
+                                if (m) {
+                                    for (const e of item.data) {
+                                        if (e.name === m[1]) {
+                                            return true;
+                                        }
+                                    }
+                                    return false;
+                                }
+
                                 const text = item.data.map(i => i.text).join("");
                                 if (text.indexOf(t) >= 0) {
                                     return true;
@@ -184,8 +265,14 @@ export default class LabelList extends React.Component {
                                             {item.data.filter(i => i.name).map(i => {
                                                 return (
                                                     <EntityName
+                                                        key={`${i.name} ${i.text}`}
                                                         name={i.name}
                                                         value={i.text}
+                                                        onClick={() => {
+                                                            this.setState({
+                                                                newText: `entity:${i.name}`
+                                                            });
+                                                        }}
                                                     />
                                                 );
                                             })}

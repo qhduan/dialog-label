@@ -60,12 +60,15 @@ export default class SlotList extends React.Component {
                             <Input
                                 value={newText}
                                 onChange={e => this.setState({newText: e.target.value})}
-                                suffix={newText.length ? <Icon type="close-circle" onClick={() => this.setState({ newText: "" })} /> : null}
+                                suffix={newText.length ? (
+                                    <Icon style={{cursor: "pointer"}} type="close-circle" onClick={() => this.setState({ newText: "" })} >esc</Icon>
+                                ) : null}
                                 onKeyUp={e => {
                                     if (e.keyCode === 27) {
                                         this.setState({ newText: "" });
                                     }
                                 }}
+                                placeholder="要新建实体请 输入一个名称 并 回车"
                             />
                         </Item>
                     </Form>

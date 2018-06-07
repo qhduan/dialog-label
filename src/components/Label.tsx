@@ -461,11 +461,11 @@ class SlotNameInput extends React.Component<SlotNameInputProps, SlotNameInputSta
 
     render () {
         return (
-            <form
+            <div
                 onSubmit={this.submit}
             >
                 { this.inner() }
-            </form>
+            </div>
         )
     }
 
