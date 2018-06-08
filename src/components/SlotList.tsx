@@ -9,7 +9,7 @@ const Columns = [
         key: "name",
         dataIndex: "name",
         title: "名称",
-        render: t => <Link to={`/slot/${t}`}>{ t }</Link>,
+        render: t => <Link title={`奠基修改${t}的数据`} to={`/slot/${t}`}>{ t }</Link>,
     },
     {
         key: "count",
@@ -115,6 +115,7 @@ export default class SlotList extends React.Component {
                                                 setEntities(newEntities);
                                                 this.setState({});
                                             }}
+                                            title="删除这条记录、包括的所有实体，注意删除后无法恢复"
                                         >
                                             删除
                                         </Button>

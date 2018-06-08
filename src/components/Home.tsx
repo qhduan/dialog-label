@@ -55,7 +55,7 @@ export default class Home extends React.Component {
                                 <Icon type="inbox" />
                                 </p>
                                 <p className="ant-upload-text">点击这里上传 或者 把语料文件拖动到这个区域</p>
-                                <p className="ant-upload-hint">Support for a single or bulk upload. Strictly prohibit from uploading company data or other band files</p>
+                                <p className="ant-upload-hint">请拖动单个文件，YAML格式（.yml或后缀名，或者其他后缀名符合YAML语法的文本文件）</p>
                             </Upload.Dragger>
                         </div>
                     </Col>

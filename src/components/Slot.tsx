@@ -120,27 +120,17 @@ export default class Slot extends React.Component {
                 </div>
                 <Row>
                     <Col offset={3} span={18}>
-                    {/* data.map((item, i) => (
-                        <div key={item.join ? item.join(", ") : item}>
-                            <Select
-                                mode="tags"
-                                style={{ width: "100%", marginTop: 5 }}
-                                placeholder="..."
-                                showSearch={false}
-                                onChange={value => {
-                                    if (value && value.hasOwnProperty("length") && value["length"] <= 0) {
-                                        const newData = data.filter((_, j) => j !== i);
-                                        newData.sort(entitiyInnerSort);
-                                        this.setState({ data: newData });
-                                    } else {
-                                        data[i] = value;
-                                        this.setState({ data });
-                                    }
-                                }}
-                            >
-                            {item.join ? item.map(i => <Select.Option key={i}>{i}</Select.Option>) : <Select.Option key={item}>{item}</Select.Option>}</Select>
+                        <div>
+                            <p>
+                                提示：
+                                <br />
+                                每行第一个是实体结果，之后是此实体的别称
+                                <br />
+                                别称是主要实体的别称，例如标注了实体“北京市”，备选可以是“北京”、“首都”、“帝都”
+                                <br />
+                                如果标注了实体“星期三”，备选可以是“周三”，“水曜日”，“Wed”
+                            </p>
                         </div>
-                    )) */}
                         {data.map((item, itemInd) => (
                             <div
                                 key={item.join ? item.join(", ") : item}
@@ -202,7 +192,7 @@ export default class Slot extends React.Component {
                                 >
                                     <Input
                                         ref={`add${itemInd}`}
-                                        placeholder="加备选"
+                                        placeholder="加别称"
                                         style={{
                                             width: "100px",
                                             height: "20px",

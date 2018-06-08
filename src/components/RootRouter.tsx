@@ -146,7 +146,9 @@ export default class RootRouter extends React.Component {
                     </header>
                     <Route path="/" exact component={Home} />
                     <Route path="/label/:label" exact component={Label} />
+                    <Route path="/label/:filter/:label" exact component={Label} />
                     <Route path="/labels" exact component={LabelList} />
+                    <Route path="/labels/:text" exact component={LabelList} />
                     <Route path="/slots" exact component={SlotList} />
                     <Route path="/slot/:entity" exact component={Slot} />
                 </div>

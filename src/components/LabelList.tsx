@@ -6,15 +6,40 @@ import { EntityName } from "./EntityName";
 import { entityNames } from "./entities";
 
 
-export default class LabelList extends React.Component {
+interface LabelListProps {
+    state?: any,
+    match?: any,
+    history?: any,
+}
+
+interface LabelListState {
+    newText: string,
+    redirect: any,
+    filterText: string,
+}
+
+export default class LabelList extends React.Component<LabelListProps, LabelListState> {
 
     state = {
         newText: "",
+        filterText: "",
         redirect: null,
     }
 
     constructor (props) {
         super(props);
+        this.state.filterText = this.props.match.params.text || "";
+    }
+
+    componentDidUpdate (prevPrpos) {
+        if (
+            prevPrpos.match.params.text !== this.props.match.params.text
+            && this.props.match.params.text !== this.state.filterText
+        ) {
+            this.setState({
+                filterText: this.props.match.params.text
+            });
+        }
     }
 
     render () {
@@ -22,7 +47,8 @@ export default class LabelList extends React.Component {
         document.title = "对话标注 — 意图列表";
 
         const sentences = getSentences();
-        const { newText, redirect } = this.state;
+        const { history } = this.props;
+        const { newText, redirect, filterText } = this.state;
         return (
             <div>
                 {redirect ? <Redirect to={redirect} /> : null}
@@ -33,14 +59,10 @@ export default class LabelList extends React.Component {
                                 overlay={
                                     <Menu
                                         onClick={item => {
-                                            if (newText.match(/domain:/)) {
-                                                this.setState({
-                                                    newText: `${newText} domain:${item.key}`
-                                                });
+                                            if (filterText.match(/domain:/)) {
+                                                history.replace(`/labels/${filterText} domain:${item.key}`);
                                             } else {
-                                                this.setState({
-                                                    newText: `domain:${item.key}`
-                                                });
+                                                history.replace(`/labels/domain:${item.key}`);
                                             }
                                         }}
                                     >
@@ -53,7 +75,7 @@ export default class LabelList extends React.Component {
                                 }
                                 trigger={['click']}
                             >
-                                <Button style={{ marginRight: "20px" }}>
+                                <Button style={{ marginRight: "20px" }} title="筛选领域">
                                     领域列表
                                     <Icon type="down" />
                                 </Button>
@@ -68,14 +90,10 @@ export default class LabelList extends React.Component {
                                 overlay={
                                     <Menu
                                         onClick={item => {
-                                            if (newText.match(/intent:/)) {
-                                                this.setState({
-                                                    newText: `${newText} intent:${item.key}`
-                                                });
+                                            if (filterText.match(/intent:/)) {
+                                                history.replace(`/labels/${filterText} intent:${item.key}`);
                                             } else {
-                                                this.setState({
-                                                    newText: `intent:${item.key}`
-                                                });
+                                                history.replace(`/labels/intent:${item.key}`);
                                             }
                                         }}
                                     >
@@ -88,7 +106,7 @@ export default class LabelList extends React.Component {
                                 }
                                 trigger={['click']}
                             >
-                                <Button style={{ marginRight: "20px" }}>
+                                <Button style={{ marginRight: "20px" }} title="筛选意图">
                                     意图列表
                                     <Icon type="down" />
                                 </Button>
@@ -103,14 +121,10 @@ export default class LabelList extends React.Component {
                                 overlay={
                                     <Menu
                                         onClick={item => {
-                                            if(newText.match(/entity:/)) {
-                                                this.setState({
-                                                    newText: `${newText} entity:${item.key}`
-                                                });
+                                            if (filterText.match(/entity:/)) {
+                                                history.replace(`/labels/${filterText} entity:${item.key}`);
                                             } else {
-                                                this.setState({
-                                                    newText: `entity:${item.key}`
-                                                });
+                                                history.replace(`/labels/entity:${item.key}`);
                                             }
                                         }}
                                     >
@@ -123,7 +137,7 @@ export default class LabelList extends React.Component {
                                 }
                                 trigger={['click']}
                             >
-                                <Button style={{ marginRight: "20px" }}>
+                                <Button style={{ marginRight: "20px" }} title="筛选实体">
                                     实体列表
                                     <Icon type="down" />
                                 </Button>
@@ -135,44 +149,78 @@ export default class LabelList extends React.Component {
                         )}
                     </Col>
                 </Row>
-                <div>
-                    <Form
-                        onSubmit={e => {
-                            e.preventDefault();
-                            if (newText.trim().length <= 0) {
-                                return message.warning("不能为空");
-                            }
+                <Form
+                    onSubmit={e => {
+                        e.preventDefault();
+                        if (filterText.trim().length <= 0) {
+                            return message.warning("筛选条件不能为空");
+                        }
+                        this.props.history.replace(`/labels/${filterText.trim()}`);
+                    }}
+                >
+                    <Form.Item
+                        label="筛选"
+                        labelCol={{ span: 3 }}
+                        wrapperCol={{ span: 18 }}
+                    >
+                        <Input
+                            value={filterText}
+                            onChange={e => this.setState({filterText: e.target.value})}
+                            suffix={filterText.length ? (
+                                <Icon style={{cursor: "pointer"}} type="close-circle" onClick={() => this.setState({ filterText: "" })} >esc</Icon>
+                            ) : null}
+                            onKeyUp={e => {
+                                if (e.keyCode === 27) {
+                                    // this.setState({ filterText: "" });
+                                    this.props.history.replace(`/labels`);
+                                }
+                            }}
+                            placeholder="输入筛选条件并回车应用"
+                        />
+                    </Form.Item>
+                </Form>
+                <Form
+                    onSubmit={e => {
+                        e.preventDefault();
+                        if (newText.trim().length <= 0) {
+                            return message.warning("不能为空");
+                        }
+                        if (filterText.trim()) {
+                            this.setState({
+                                redirect: `/label/${filterText.trim()}/${newText.trim()}`
+                            });
+                        } else {
                             this.setState({
                                 redirect: `/label/${newText.trim()}`
                             });
-                        }}
+                        }
+                    }}
+                >
+                    <Form.Item
+                        label="新建"
+                        labelCol={{ span: 3 }}
+                        wrapperCol={{ span: 18 }}
                     >
-                        <Form.Item
-                            label="新建"
-                            labelCol={{ span: 3 }}
-                            wrapperCol={{ span: 18 }}
-                        >
-                            <Input
-                                value={newText}
-                                onChange={e => this.setState({newText: e.target.value})}
-                                suffix={newText.length ? (
-                                    <Icon style={{cursor: "pointer"}} type="close-circle" onClick={() => this.setState({ newText: "" })} >esc</Icon>
-                                ) : null}
-                                onKeyUp={e => {
-                                    if (e.keyCode === 27) {
-                                        this.setState({ newText: "" });
-                                    }
-                                }}
-                                placeholder="要新建意图请 输入一句话 并 回车"
-                            />
-                        </Form.Item>
-                    </Form>
-                </div>
+                        <Input
+                            value={newText}
+                            onChange={e => this.setState({newText: e.target.value})}
+                            suffix={newText.length ? (
+                                <Icon style={{cursor: "pointer"}} type="close-circle" onClick={() => this.setState({ newText: "" })} >esc</Icon>
+                            ) : null}
+                            onKeyUp={e => {
+                                if (e.keyCode === 27) {
+                                    this.setState({ newText: "" });
+                                }
+                            }}
+                            placeholder="要新建意图请 输入一句话 并 回车"
+                        />
+                    </Form.Item>
+                </Form>
                 <Row>
                     <Col span={18} offset={3}>
-                        {newText.trim().length ? (
+                        {filterText.trim().length ? (
                             <div>
-                                {`筛选 “${newText.trim()}” ：`}
+                                {`筛选 “${filterText.trim()}” ：`}
                             </div>
                         ) : null}
                         <Table
@@ -185,7 +233,7 @@ export default class LabelList extends React.Component {
                                     render: s => (
                                         <a
                                             href=""
-                                            onClick={e => { e.preventDefault(); this.setState({ newText: `domain:${s}` }) }}
+                                            onClick={e => { e.preventDefault(); this.setState({ filterText: `domain:${s}` }) }}
                                             style={{ color: "gray" }}
                                             title={`筛选领域${s}`}
                                         >
@@ -200,7 +248,7 @@ export default class LabelList extends React.Component {
                                     render: s => (
                                         <a
                                             href=""
-                                            onClick={e => { e.preventDefault(); this.setState({ newText: `intent:${s}` }) }}
+                                            onClick={e => { e.preventDefault(); this.setState({ filterText: `intent:${s}` }) }}
                                             style={{ color: "gray" }}
                                             title={`筛选实体${s}`}
                                         >
@@ -212,7 +260,14 @@ export default class LabelList extends React.Component {
                                     key: "sentence",
                                     dataIndex: "sentence",
                                     title: "句子",
-                                    render: s => (
+                                    render: s => filterText.trim() ? (
+                                        <Link
+                                            to={`/label/${filterText.trim()}/${s}`}
+                                            title={`编辑句子“${s}”`}
+                                        >
+                                            { s }
+                                        </Link>
+                                    ) : (
                                         <Link
                                             to={`/label/${s}`}
                                             title={`编辑句子“${s}”`}
@@ -234,7 +289,7 @@ export default class LabelList extends React.Component {
                             ]}
                             dataSource={sentences.filter(item => {
                                 // 过滤
-                                const t = newText.trim();
+                                const t = filterText.trim();
                                 if (t.length <= 0) {
                                     return true;
                                 }
@@ -295,7 +350,7 @@ export default class LabelList extends React.Component {
                                                         value={i.text}
                                                         onClick={() => {
                                                             this.setState({
-                                                                newText: `entity:${i.name}`
+                                                                filterText: `entity:${i.name}`
                                                             });
                                                         }}
                                                     />
@@ -316,6 +371,7 @@ export default class LabelList extends React.Component {
                                                 setSentences(newSentences);
                                                 this.setState({})
                                             }}
+                                            title="删除这条标注，注意删除后无法恢复"
                                         >
                                             删除
                                         </Button>
