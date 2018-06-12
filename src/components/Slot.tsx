@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Link, Redirect } from "react-router-dom";
+import * as _ from "lodash";
 import { Table, Select, Form, Button, Input, message, Row, Col, Tag } from "antd";
 const { Option } = Select;
 const { Item } = Form;
@@ -92,7 +93,9 @@ export default class Slot extends React.Component {
                             e.preventDefault();
                             if (newEntity.trim().length) {
                                 for (const d of data) {
-                                    if (d.indexOf(newEntity) !== -1) {
+                                    if (_.isString(d) && d === newEntity) {
+                                        return message.warning("重复了");
+                                    } else if (_.isArray(d) && d.indexOf(newEntity) !== -1) {
                                         return message.warning("重复了");
                                     }
                                 }

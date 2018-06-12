@@ -80,6 +80,7 @@
     "jaccard": "^0.4.0",
     "js-md5": "^0.7.3",
     "js-yaml": "^3.12.0",
+    "lodash": "^4.17.10",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2"
   },
