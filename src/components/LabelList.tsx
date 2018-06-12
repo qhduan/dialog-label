@@ -240,6 +240,7 @@ export default class LabelList extends React.Component<LabelListProps, LabelList
                                             { s }
                                         </a>
                                     ),
+                                    width: 100,
                                 },
                                 {
                                     key: "intent",
@@ -255,6 +256,7 @@ export default class LabelList extends React.Component<LabelListProps, LabelList
                                             { s }
                                         </a>
                                     ),
+                                    width: 100,
                                 },
                                 {
                                     key: "sentence",

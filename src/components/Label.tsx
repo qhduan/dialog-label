@@ -721,19 +721,25 @@ class SlotNameInput extends React.Component<SlotNameInputProps, SlotNameInputSta
     }
 
     inner () {
-        const { data, placeholder, style } = this.props;
+        const { placeholder, style } = this.props;
         const { value } = this.state;
 
-        const options = entityNames.map(i => (
-            <Option
-                ref={i}
-                key={i}
-            >
-                {i}
-            </Option>
-        ));
+        let options = entityNames.map(i => i).filter(i => {
+            return i.indexOf(value) !== -1;
+        });
 
         if (options.length) {
+            options.sort((a, b) => {
+                return a.indexOf(value) - b.indexOf(value);
+            })
+            options = options.map(i => (
+                <Option
+                    ref={i}
+                    key={i}
+                >
+                    {i}
+                </Option>
+            ));
             return (
                 <Select
                     mode="combobox"
