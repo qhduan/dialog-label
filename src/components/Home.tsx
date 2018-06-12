@@ -55,6 +55,7 @@ export default class Home extends React.Component {
                                 <Icon type="inbox" />
                                 </p>
                                 <p className="ant-upload-text">点击这里上传 或者 把语料文件拖动到这个区域</p>
+                                <p className="ant-upload-hint">默认数据会保存在localStorage中，一般情况不能超过5MB，如果有很多实体、意图的情况，可以拆分多个文件</p>
                                 <p className="ant-upload-hint">请拖动单个文件，YAML格式（.yml或后缀名，或者其他后缀名符合YAML语法的文本文件）</p>
                             </Upload.Dragger>
                         </div>
