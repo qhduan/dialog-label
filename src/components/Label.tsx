@@ -697,12 +697,8 @@ class SlotNameInput extends React.Component<SlotNameInputProps, SlotNameInputSta
         this.props.onSubmit(value || this.state.value);
     }
 
-    handleChange = (value, option) => {
+    handleChange = (value) => {
         this.setState({ value });
-        // console.log("option", option);
-        if (option && option.ref) {
-            this.submit(null, option.key);
-        }
     }
 
     constructor (props) {
@@ -748,6 +744,10 @@ class SlotNameInput extends React.Component<SlotNameInputProps, SlotNameInputSta
                     showSearch={ false }
                     filterOption={ false }
                     onChange={ this.handleChange }
+                    onSelect={ value => {
+                        this.handleChange(value);
+                        this.submit(null, value);
+                    }}
                 >
                     { options }
                 </Select>
@@ -764,6 +764,10 @@ class SlotNameInput extends React.Component<SlotNameInputProps, SlotNameInputSta
                 showSearch={ false }
                 filterOption={ false }
                 onChange={ this.handleChange }
+                onSelect={ value => {
+                    this.handleChange(value);
+                    this.submit(null, value);
+                }}
             />
         );
     }
