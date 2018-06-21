@@ -90,7 +90,7 @@ export default class Slot extends React.Component {
                             />
                         </Item>
                         <Item
-                            label="包含其他实体数据（）"
+                            label="包含其他实体数据"
                             labelCol={{ span: 3 }}
                             wrapperCol={{ span: 18 }}
                         >
