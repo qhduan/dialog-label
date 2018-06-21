@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link, Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { Row, Col, Icon, Upload, message } from "antd";
 import * as yaml from "js-yaml";
 import { setSentences } from "./sentences";

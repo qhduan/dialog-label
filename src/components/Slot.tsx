@@ -14,6 +14,7 @@ export default class Slot extends React.Component {
         newEntity: "",
         redirect: null,
         regex: "",
+        copyFrom: "",
     }
 
     constructor (props) {
@@ -33,7 +34,7 @@ export default class Slot extends React.Component {
 
         document.title = "对话标注 — 实体标注 — " + this.state.entity;
 
-        const { data, newEntity, redirect, entity, regex } = this.state;
+        const { data, newEntity, redirect, entity, regex, copyFrom } = this.state;
         return (
             <div>
                 { redirect ? <Redirect to={redirect} /> : null }
@@ -57,6 +58,7 @@ export default class Slot extends React.Component {
                                     entity,
                                     data,
                                     regex,
+                                    copyFrom,
                                 });
                                 setEntities(n);
                                 this.setState({ redirect: "/slots" })
@@ -85,6 +87,17 @@ export default class Slot extends React.Component {
                                 value={regex}
                                 onChange={e => this.setState({ regex: e.target.value })}
                                 placeholder="可选正则表达式，注意要把“\”写成“\\”"
+                            />
+                        </Item>
+                        <Item
+                            label="包含其他实体数据（）"
+                            labelCol={{ span: 3 }}
+                            wrapperCol={{ span: 18 }}
+                        >
+                            <Input
+                                value={copyFrom}
+                                onChange={e => this.setState({ copyFrom: e.target.value })}
+                                placeholder="导入某个其他名字的实体数据到这里，也就是数据会变成此实体数据+指定实体数据"
                             />
                         </Item>
                     </Form>
