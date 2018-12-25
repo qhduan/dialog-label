@@ -28,16 +28,16 @@ export default class LabelList extends React.Component<LabelListProps, LabelList
 
     constructor (props) {
         super(props);
-        this.state.filterText = this.props.match.params.text || "";
+        this.state.filterText = decodeURIComponent(this.props.match.params.text) || "";
     }
 
     componentDidUpdate (prevPrpos) {
         if (
             prevPrpos.match.params.text !== this.props.match.params.text
-            && this.props.match.params.text !== this.state.filterText
+            && decodeURIComponent(this.props.match.params.text) !== this.state.filterText
         ) {
             this.setState({
-                filterText: this.props.match.params.text
+                filterText: decodeURIComponent(this.props.match.params.text)
             });
         }
     }
@@ -187,11 +187,11 @@ export default class LabelList extends React.Component<LabelListProps, LabelList
                         }
                         if (filterText.trim()) {
                             this.setState({
-                                redirect: `/label/${filterText.trim()}/${newText.trim()}`
+                                redirect: `/label/${encodeURIComponent(filterText.trim())}/${encodeURIComponent(newText.trim())}`
                             });
                         } else {
                             this.setState({
-                                redirect: `/label/${newText.trim()}`
+                                redirect: `/label/${encodeURIComponent(newText.trim())}`
                             });
                         }
                     }}

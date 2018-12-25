@@ -48,7 +48,7 @@ export default class SlotList extends React.Component {
                                 return message.warning("不能为空");
                             }
                             this.setState({
-                                redirect: `/slot/${newText.trim()}`
+                                redirect: `/slot/${encodeURIComponent(newText.trim())}`
                             });
                         }}
                     >

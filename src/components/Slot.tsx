@@ -19,7 +19,7 @@ export default class Slot extends React.Component {
 
     constructor (props) {
         super(props);
-        this.state.entity = props.match.params.entity;
+        this.state.entity = decodeURIComponent(props.match.params.entity);
         const s = getEntities().filter(i => i.entity === this.state.entity);
         if (s.length) {
             this.state.data = s[0].data;
