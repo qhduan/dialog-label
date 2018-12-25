@@ -264,14 +264,14 @@ export default class LabelList extends React.Component<LabelListProps, LabelList
                                     title: "句子",
                                     render: s => filterText.trim() ? (
                                         <Link
-                                            to={`/label/${filterText.trim()}/${s}`}
+                                            to={`/label/${encodeURIComponent(filterText.trim())}/${encodeURIComponent(s)}`}
                                             title={`编辑句子“${s}”`}
                                         >
                                             { s }
                                         </Link>
                                     ) : (
                                         <Link
-                                            to={`/label/${s}`}
+                                            to={`/label/${encodeURIComponent(s)}`}
                                             title={`编辑句子“${s}”`}
                                         >
                                             { s }

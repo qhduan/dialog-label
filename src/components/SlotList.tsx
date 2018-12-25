@@ -9,7 +9,7 @@ const Columns = [
         key: "name",
         dataIndex: "name",
         title: "名称",
-        render: t => <Link title={`奠基修改${t}的数据`} to={`/slot/${t}`}>{ t }</Link>,
+        render: t => <Link title={`奠基修改${t}的数据`} to={`/slot/${encodeURIComponent(t)}`}>{ t }</Link>,
     },
     {
         key: "count",
