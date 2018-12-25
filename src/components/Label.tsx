@@ -38,7 +38,7 @@ export default class Label extends React.Component<LabelProps, LabelState> {
 
         getSentences().forEach(obj => {
             const sentence = obj.data.map(i => i.text).join("");
-            if (sentence === decodeURIComponent(props.match.params.label)) {
+            if (props.match.params.label && sentence === (props.match.params.label)) {
                 title = "修改";
                 this.state.domain = obj.domain;
                 this.state.intent = obj.intent;
@@ -54,7 +54,7 @@ export default class Label extends React.Component<LabelProps, LabelState> {
         });
         
         this.state.title = title;
-        this.state.currentLabel = decodeURIComponent(props.match.params.label);
+        this.state.currentLabel = (props.match.params.label);
     }
 
     state = {

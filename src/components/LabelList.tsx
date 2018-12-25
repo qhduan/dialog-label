@@ -28,7 +28,7 @@ export default class LabelList extends React.Component<LabelListProps, LabelList
 
     constructor (props) {
         super(props);
-        this.state.filterText = decodeURIComponent(this.props.match.params.text) || "";
+        this.state.filterText = this.props.match.params.text && decodeURIComponent(this.props.match.params.text) || "";
     }
 
     componentDidUpdate (prevPrpos) {
@@ -263,19 +263,19 @@ export default class LabelList extends React.Component<LabelListProps, LabelList
                                     dataIndex: "sentence",
                                     title: "句子",
                                     render: s => filterText.trim() ? (
-                                        <Link
-                                            to={`/label/${encodeURIComponent(filterText.trim())}/${encodeURIComponent(s)}`}
+                                        <a
+                                            href={`#/label/${encodeURIComponent(filterText.trim())}/${encodeURIComponent(s)}`}
                                             title={`编辑句子“${s}”`}
                                         >
                                             { s }
-                                        </Link>
+                                        </a>
                                     ) : (
-                                        <Link
-                                            to={`/label/${encodeURIComponent(s)}`}
+                                        <a
+                                            href={`#/label/${encodeURIComponent(s)}`}
                                             title={`编辑句子“${s}”`}
                                         >
                                             { s }
-                                        </Link>
+                                        </a>
                                     ),
                                 },
                                 {
