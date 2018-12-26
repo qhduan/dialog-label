@@ -31,7 +31,7 @@ export function getSentences () {
     } else {
         try {
             const t = JSON.parse(sentences);
-            t.sort(sentenceSort);
+            // t.sort(sentenceSort);
 
             intentNames = []
             t.filter(i => i.intent).forEach(i => intentNames.indexOf(i.intent) === -1 ? intentNames.push(i.intent) : null);
@@ -80,7 +80,7 @@ export function setSentences (sentences: any[]) {
     intentNames.sort(sort);
     domainNames.sort(sort);
 
-    sentences.sort(sentenceSort);
+    // sentences.sort(sentenceSort);
     localStorage.setItem("sentences", JSON.stringify(sentences));
 }
 

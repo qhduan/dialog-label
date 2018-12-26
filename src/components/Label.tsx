@@ -454,7 +454,7 @@ export default class Label extends React.Component<LabelProps, LabelState> {
                 self = self.concat(Array.from(part.text));
             }
         }
-        const selfText = self.join("");
+        // const selfText = self.join("");
         const self2Gram = this.nGram(self, 2);
         const self3Gram = this.nGram(self, 3);
         const selfAll = self.concat(self2Gram).concat(self3Gram);
