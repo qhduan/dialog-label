@@ -4,6 +4,7 @@ import { Table, Input, Form, message, Button, Row, Col, Icon, Dropdown, Menu } f
 import { getSentences, setSentences, intentNames, domainNames } from "./sentences";
 import { EntityName } from "./EntityName";
 import { entityNames } from "./entities";
+import { Base64 } from 'js-base64';
 
 
 interface LabelListProps {
@@ -28,16 +29,16 @@ export default class LabelList extends React.Component<LabelListProps, LabelList
 
     constructor (props) {
         super(props);
-        this.state.filterText = this.props.match.params.text && decodeURIComponent(this.props.match.params.text) || "";
+        this.state.filterText = this.props.match.params.text && Base64.decode(decodeURIComponent(this.props.match.params.text)) || "";
     }
 
     componentDidUpdate (prevPrpos) {
         if (
             prevPrpos.match.params.text !== this.props.match.params.text
-            && decodeURIComponent(this.props.match.params.text) !== this.state.filterText
+            && Base64.decode(decodeURIComponent(this.props.match.params.text)) !== this.state.filterText
         ) {
             this.setState({
-                filterText: decodeURIComponent(this.props.match.params.text)
+                filterText: Base64.decode(decodeURIComponent(this.props.match.params.text))
             });
         }
     }
@@ -59,11 +60,13 @@ export default class LabelList extends React.Component<LabelListProps, LabelList
                                 overlay={
                                     <Menu
                                         onClick={item => {
+                                            let t = ''
                                             if (filterText.match(/domain:/)) {
-                                                history.replace(`/labels/${filterText} domain:${item.key}`);
+                                                t = `${filterText} domain:${item.key}`
                                             } else {
-                                                history.replace(`/labels/domain:${item.key}`);
+                                                t = `domain:${item.key}`
                                             }
+                                            history.replace(`/labels/${encodeURIComponent(Base64.encode(t))}`);
                                         }}
                                     >
                                         {domainNames.map(i => (
@@ -90,11 +93,14 @@ export default class LabelList extends React.Component<LabelListProps, LabelList
                                 overlay={
                                     <Menu
                                         onClick={item => {
+                                            let t = ''
                                             if (filterText.match(/intent:/)) {
-                                                history.replace(`/labels/${filterText} intent:${item.key}`);
+                                                t = `${filterText} intent:${item.key}`
                                             } else {
-                                                history.replace(`/labels/intent:${item.key}`);
+                                                t = `intent:${item.key}`
                                             }
+                                            t = encodeURIComponent(Base64.encode(t))
+                                            history.replace(`/labels/${t}`);
                                         }}
                                     >
                                         {intentNames.map(i => (
@@ -121,11 +127,14 @@ export default class LabelList extends React.Component<LabelListProps, LabelList
                                 overlay={
                                     <Menu
                                         onClick={item => {
+                                            let t = ''
                                             if (filterText.match(/entity:/)) {
-                                                history.replace(`/labels/${filterText} entity:${item.key}`);
+                                                t = `${filterText} entity:${item.key}`
                                             } else {
-                                                history.replace(`/labels/entity:${item.key}`);
+                                                t = `entity:${item.key}`
                                             }
+                                            t = encodeURIComponent(Base64.encode(t))
+                                            history.replace(`/labels/${t}`)
                                         }}
                                     >
                                         {entityNames.map(i => (
@@ -155,7 +164,8 @@ export default class LabelList extends React.Component<LabelListProps, LabelList
                         if (filterText.trim().length <= 0) {
                             return message.warning("筛选条件不能为空");
                         }
-                        this.props.history.replace(`/labels/${filterText.trim()}`);
+                        let t = encodeURIComponent(Base64.encode(filterText.trim()))
+                        this.props.history.replace(`/labels/${t}`);
                     }}
                 >
                     <Form.Item
@@ -172,7 +182,7 @@ export default class LabelList extends React.Component<LabelListProps, LabelList
                             onKeyUp={e => {
                                 if (e.keyCode === 27) {
                                     // this.setState({ filterText: "" });
-                                    this.props.history.replace(`/labels`);
+                                    this.props.history.replace('/labels');
                                 }
                             }}
                             placeholder="输入筛选条件并回车应用"
@@ -187,11 +197,11 @@ export default class LabelList extends React.Component<LabelListProps, LabelList
                         }
                         if (filterText.trim()) {
                             this.setState({
-                                redirect: `/label/${encodeURIComponent(filterText.trim())}/${encodeURIComponent(newText.trim())}`
+                                redirect: `/label/${encodeURIComponent(Base64.encode(filterText.trim()))}/${encodeURIComponent(Base64.encode(newText.trim()))}`
                             });
                         } else {
                             this.setState({
-                                redirect: `/label/${encodeURIComponent(newText.trim())}`
+                                redirect: `/label/${encodeURIComponent(Base64.encode(newText.trim()))}`
                             });
                         }
                     }}
@@ -262,21 +272,27 @@ export default class LabelList extends React.Component<LabelListProps, LabelList
                                     key: "sentence",
                                     dataIndex: "sentence",
                                     title: "句子",
-                                    render: s => filterText.trim() ? (
-                                        <a
-                                            href={`#/label/${encodeURIComponent(filterText.trim())}/${encodeURIComponent(s)}`}
-                                            title={`编辑句子“${s}”`}
-                                        >
-                                            { s }
-                                        </a>
-                                    ) : (
-                                        <a
-                                            href={`#/label/${encodeURIComponent(s)}`}
-                                            title={`编辑句子“${s}”`}
-                                        >
-                                            { s }
-                                        </a>
-                                    ),
+                                    render: s => {
+                                        if (filterText.trim()) {
+                                            return (
+                                                <Link
+                                                    to={`/label/${encodeURIComponent(Base64.encode(filterText.trim()))}/${encodeURIComponent(Base64.encode(s))}`}
+                                                    title={`编辑句子“${s}”`}
+                                                >
+                                                    { s }
+                                                </Link>
+                                            )
+                                        } else {
+                                            return (
+                                                <Link
+                                                    to={`/label/${encodeURIComponent(Base64.encode(s))}`}
+                                                    title={`编辑句子“${s}”`}
+                                                >
+                                                    { s }
+                                                </Link>
+                                            )
+                                        }
+                                    },
                                 },
                                 {
                                     key: "entities",

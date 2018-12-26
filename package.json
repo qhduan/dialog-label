@@ -31,7 +31,7 @@
     "lint:ts": "tslint './src/**/*.ts*' --format stylish --force",
     "lint:sass": "stylelint ./src/**/*.scss",
     "start": "npm run start-dev",
-    "start-dev": "webpack-dev-server --config=configs/webpack/dev.js",
+    "dev": "webpack-dev-server --config=configs/webpack/dev.js",
     "start-prod": "npm run build && node express.js",
     "test": "jest --watch --coverage --config=configs/jest.json"
   },
@@ -77,7 +77,9 @@
     "@types/react-router-dom": "^4.2.7",
     "antd": "^3.6.1",
     "file-saver": "^2.0.0",
+    "history": "^4.7.2",
     "jaccard": "^0.4.0",
+    "js-base64": "^2.5.0",
     "js-md5": "^0.7.3",
     "js-yaml": "^3.12.0",
     "lodash": "^4.17.10",
