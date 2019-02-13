@@ -299,7 +299,7 @@ export default class Label extends React.Component<LabelProps, LabelState> {
 
                                 if (this.props.match.params.filter) {
                                     this.setState({
-                                        redirect: `/labels/${encodeURIComponent(Base64.encode(this.props.match.params.filter))}`
+                                        redirect: `/labels/${encodeURIComponent(this.props.match.params.filter)}`
                                     });
                                 } else {
                                     this.setState({
@@ -367,7 +367,7 @@ export default class Label extends React.Component<LabelProps, LabelState> {
                             onClick={() => {
                                 if (this.props.match.params.filter) {
                                     this.setState({
-                                        redirect: `/labels/${encodeURIComponent(Base64.encode(this.props.match.params.filter))}`
+                                        redirect: `/labels/${encodeURIComponent(this.props.match.params.filter)}`
                                     });
                                 } else {
                                     this.setState({
