@@ -60,9 +60,14 @@ export default class SlotList extends React.Component {
                             <Input
                                 value={newText}
                                 onChange={e => this.setState({newText: e.target.value})}
-                                suffix={newText.length ? (
-                                    <Icon style={{cursor: "pointer"}} type="close-circle" onClick={() => this.setState({ newText: "" })} >esc</Icon>
-                                ) : null}
+                                suffix={
+                                    <Button
+                                        style={{cursor: "pointer", border: 0, height: '24px'}}
+                                        icon="close-circle"
+                                        onClick={() => this.setState({ newText: "" })}
+                                        disabled={newText.length <= 0}
+                                    />
+                                }
                                 onKeyUp={e => {
                                     if (e.keyCode === 27) {
                                         this.setState({ newText: "" });

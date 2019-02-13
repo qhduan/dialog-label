@@ -176,9 +176,14 @@ export default class LabelList extends React.Component<LabelListProps, LabelList
                         <Input
                             value={filterText}
                             onChange={e => this.setState({filterText: e.target.value})}
-                            suffix={filterText.length ? (
-                                <Icon style={{cursor: "pointer"}} type="close-circle" onClick={() => this.setState({ filterText: "" })} >esc</Icon>
-                            ) : null}
+                            suffix={
+                                <Button
+                                    style={{cursor: "pointer", border: 0, height: '24px'}}
+                                    icon="close-circle"
+                                    onClick={() => this.setState({ filterText: "" })}
+                                    disabled={filterText.length <= 0}
+                                />
+                            }
                             onKeyUp={e => {
                                 if (e.keyCode === 27) {
                                     // this.setState({ filterText: "" });
@@ -214,9 +219,14 @@ export default class LabelList extends React.Component<LabelListProps, LabelList
                         <Input
                             value={newText}
                             onChange={e => this.setState({newText: e.target.value})}
-                            suffix={newText.length ? (
-                                <Icon style={{cursor: "pointer"}} type="close-circle" onClick={() => this.setState({ newText: "" })} >esc</Icon>
-                            ) : null}
+                            suffix={
+                                <Button
+                                    style={{cursor: "pointer", border: 0, height: '24px'}}
+                                    icon="close-circle"
+                                    onClick={() => this.setState({ newText: "" })}
+                                    disabled={newText.length <= 0}
+                                />
+                            }
                             onKeyUp={e => {
                                 if (e.keyCode === 27) {
                                     this.setState({ newText: "" });
